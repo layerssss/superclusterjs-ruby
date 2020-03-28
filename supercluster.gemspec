@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'supercluster'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.summary = 'supercluster Ruby gem is a bridge to JavaScript library supercluster.js'
   s.description =
     'A very fast geospatial point clustering library for browsers and Node.'
