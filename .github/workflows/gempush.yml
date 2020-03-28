@@ -1,0 +1,48 @@
+name: Bump + Publish
+
+on:
+  # Manually trigger Action by "start" button, until GitHub supports it in a proper way
+  # https://dev.to/s_abderemane/manual-trigger-with-github-actions-279e
+  watch:
+    types: [started]
+
+jobs:
+  build:
+    name: Bump + Publish
+    runs-on: ubuntu-latest
+    if: github.actor == github.event.repository.owner.login
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      - name: install dependencies
+        run: |
+          gem install bundler:2.0.2
+          bundle install
+          yarn install
+      - name: build js
+        run: yarn build
+      
+      - name: bump
+        run: |
+          git config user.name "Michael Yin"
+          git config user.email "layerssss@gmail.com"
+          bin/bump patch --tag
+          git push
+          git push --tags
+
+      - name: Publish to RubyGems
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          rake build release:rubygem_push
+        env:
+          GEM_HOST_API_KEY: ${{secrets.RUBYGEMS_AUTH_TOKEN}}

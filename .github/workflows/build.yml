@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+    pull_request:
+      - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12.x"
+
+      - name: install dependencies
+        run: |
+          gem install bundler:2.0.2
+          bundle install
+          yarn install
+      - name: build js 
+        run: yarn build
+
+      - name: rake test
+        run: rake test
