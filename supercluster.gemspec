@@ -11,5 +11,5 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/*.rb', 'lib/supercluster-build.js']
   s.homepage = 'https://github.com/layerssss/superclusterjs-ruby'
   s.license = 'MIT'
-  s.add_runtime_dependency 'execjs', '~> 2.2', '>= 2.2.1'
+  s.add_runtime_dependency 'mini_racer', '~> 0.2.0'
 end

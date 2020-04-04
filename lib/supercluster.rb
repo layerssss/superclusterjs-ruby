@@ -1,27 +1,31 @@
 # frozen_string_literal: true
 
-require 'execjs'
+require 'mini_racer'
 
 class Supercluster
   class Error < StandardError; end
 
-  def self.context
-    @context ||=
-      begin
-        source = File.read(File.expand_path('supercluster-build.js', __dir__))
-        ExecJS.compile(source)
-      end
+  def initialize(*args)
+    @context = MiniRacer::Context.new
+    @context.load(
+      File.expand_path('supercluster-build.js', __dir__)
+    )
+    @context.attach('args', proc { args })
+    @context.eval('var supercluster = new Supercluster(...args())')
   end
 
-  def self.call_supercluster(method, *args)
-    context.call('callSupercluster', method, *args)
+  def load(*args)
+    @context.attach('args', proc { args })
+    @context.eval('supercluster.load(...args())')
   end
 
-  def self.get_clusters(*args)
-    call_supercluster('getClusters', *args)
+  def get_clusters(*args)
+    @context.attach('args', proc { args })
+    @context.eval('supercluster.getClusters(...args())')
   end
 
-  def self.get_tiles(*args)
-    call_supercluster('getTiles', *args)
+  def get_tiles(*args)
+    @context.attach('args', args)
+    @context.eval('supercluster.getTiles(...args())')
   end
 end

@@ -11,10 +11,11 @@ class SuperclusterTest < Minitest::Test
   end
 
   def test_not_crash_on_weird_bbox_values
+    supercluster = Supercluster.new
+    supercluster.load(points)
     assert_equal(
       26,
-      Supercluster.get_clusters(
-        {}, points,
+      supercluster.get_clusters(
         [129.426390, -103.720017, -445.930843, 114.518236], 1
       ).size
     )
